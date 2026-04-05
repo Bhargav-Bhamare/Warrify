@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warrify - Asset Command Center</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(16, 185, 129, 0.6); }
+        }
+        @keyframes slide-up {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        @keyframes shimmer {
+            0% { background-position: -1000px 0; }
+            100% { background-position: 1000px 0; }
+        }
+        .animate-slide-up { animation: slide-up 0.6s ease-out forwards; }
+        .animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+        .animate-rotate { animation: rotate 2s linear infinite; }
+        .shimmer {
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            background-size: 1000px 100%;
+            animation: shimmer 2s infinite;
+        }
+        .health-gauge {
+            position: relative;
+            width: 200px;
+            height: 200px;
+        }
+        .gauge-circle {
+            fill: none;
+            stroke-width: 12;
+            stroke-linecap: round;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+            transition: stroke-dashoffset 1s ease-in-out;
+        }
+        .glass-card {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .progress-ring {
+            transition: stroke-dashoffset 0.5s ease;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-gray-100 min-h-screen">
+    
+    <!-- Navigation -->
+    <nav class="glass-card border-b border-slate-700 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-emerald-500 to-indigo-600 rounded-lg flex items-center justify-center animate-pulse-glow">
+                        <i class="fas fa-shield-alt text-white"></i>
+                    </div>
+                    <span class="text-2xl font-bold bg-gradient-to-r from-emerald-400 to-indigo-500 bg-clip-text text-transparent">Warrify</span>
+                </div>
+                <div class="flex items-center space-x-6">
+                    <a href="/dashboard" class="text-emerald-400 hover:text-emerald-300 transition"><i class="fas fa-home mr-2"></i>Dashboard</a>
+                    <a href="/add-product" class="text-gray-300 hover:text-white transition"><i class="fas fa-plus-circle mr-2"></i>Add Product</a>
+                    <a href="/claim-concierge" class="text-gray-300 hover:text-white transition"><i class="fas fa-hands-helping mr-2"></i>Claims</a>
+                    <a href="/sustainability" class="text-gray-300 hover:text-white transition"><i class="fas fa-leaf mr-2"></i>Sustainability</a>
+                    <a href="/community" class="text-gray-300 hover:text-white transition"><i class="fas fa-users mr-2"></i>Community</a>
+                    <div class="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center cursor-pointer hover:bg-indigo-500 transition">
+                        <i class="fas fa-user"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Header Section -->
+        <div class="mb-8 animate-slide-up">
+            <h1 class="text-4xl font-bold mb-2">Welcome back, Rajesh! 👋</h1>
+            <p class="text-gray-400">Your home asset command center is ready</p>
+        </div>
+
+        <!-- Critical Alerts Banner -->
+        <div id="alertBanner" class="mb-6 animate-slide-up" style="animation-delay: 0.1s"></div>
+
+        <!-- Top Stats Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="glass-card rounded-xl p-6 animate-slide-up hover:scale-105 transition-transform cursor-pointer" style="animation-delay: 0.2s">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-400 text-sm">Total Assets</p>
+                        <p class="text-3xl font-bold text-white mt-1" id="totalAssets">0</p>
+                    </div>
+                    <div class="w-12 h-12 bg-indigo-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-box text-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-xl p-6 animate-slide-up hover:scale-105 transition-transform cursor-pointer" style="animation-delay: 0.3s">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-400 text-sm">Active Warranties</p>
+                        <p class="text-3xl font-bold text-emerald-400 mt-1" id="activeWarranties">0</p>
+                    </div>
+                    <div class="w-12 h-12 bg-emerald-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-shield-check text-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-xl p-6 animate-slide-up hover:scale-105 transition-transform cursor-pointer" style="animation-delay: 0.4s">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-400 text-sm">Expiring Soon</p>
+                        <p class="text-3xl font-bold text-amber-400 mt-1" id="expiringSoon">0</p>
+                    </div>
+                    <div class="w-12 h-12 bg-amber-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-exclamation-triangle text-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-xl p-6 animate-slide-up hover:scale-105 transition-transform cursor-pointer" style="animation-delay: 0.5s">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-400 text-sm">Total Value</p>
+                        <p class="text-3xl font-bold text-white mt-1" id="totalValue">₹0</p>
+                    </div>
+                    <div class="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-rupee-sign text-xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            
+            <!-- Home Security Health Score -->
+            <div class="glass-card rounded-xl p-6 animate-slide-up" style="animation-delay: 0.6s">
+                <h2 class="text-xl font-bold mb-4 flex items-center">
+                    <i class="fas fa-heartbeat text-emerald-400 mr-2"></i>
+                    Home Security Level
+                </h2>
+                <div class="flex flex-col items-center">
+                    <div class="health-gauge mb-4">
+                        <svg width="200" height="200">
+                            <circle cx="100" cy="100" r="90" class="gauge-circle" stroke="#1e293b" stroke-width="12"/>
+                            <circle id="healthCircle" cx="100" cy="100" r="90" class="gauge-circle" stroke="url(#gradient)" stroke-dasharray="565.48" stroke-dashoffset="565.48"/>
+                            <defs>
+                                <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center">
+                            <span id="healthScore" class="text-5xl font-bold text-emerald-400">0</span>
+                            <span class="text-gray-400 text-sm">Health Score</span>
+                        </div>
+                    </div>
+                    <div class="w-full space-y-2">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-400">Coverage Status</span>
+                            <span id="coverageStatus" class="text-emerald-400 font-semibold">Excellent</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-400">Risk Level</span>
+                            <span id="riskLevel" class="text-green-400 font-semibold">Low</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Predictive Maintenance Widget -->
+            <div class="glass-card rounded-xl p-6 animate-slide-up lg:col-span-2" style="animation-delay: 0.7s">
+                <h2 class="text-xl font-bold mb-4 flex items-center justify-between">
+                    <span><i class="fas fa-wrench text-indigo-400 mr-2"></i>Predictive Maintenance</span>
+                    <span class="text-sm text-gray-400 font-normal">AI-Powered Insights</span>
+                </h2>
+                <div id="maintenanceTasks" class="space-y-3 max-h-64 overflow-y-auto"></div>
+            </div>
+        </div>
+
+        <!-- Quick Access Locker -->
+        <div class="glass-card rounded-xl p-6 animate-slide-up mb-8" style="animation-delay: 0.8s">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-xl font-bold flex items-center">
+                    <i class="fas fa-lock-open text-emerald-400 mr-2"></i>
+                    Quick Access Locker
+                </h2>
+                <button onclick="window.location.href='/add-product'" class="px-4 py-2 bg-gradient-to-r from-emerald-500 to-indigo-600 rounded-lg hover:from-emerald-600 hover:to-indigo-700 transition flex items-center space-x-2">
+                    <i class="fas fa-plus"></i>
+                    <span>Add Asset</span>
+                </button>
+            </div>
+            <div id="assetGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+        </div>
+
+        <!-- Recent Activity Timeline -->
+        <div class="glass-card rounded-xl p-6 animate-slide-up" style="animation-delay: 0.9s">
+            <h2 class="text-xl font-bold mb-4 flex items-center">
+                <i class="fas fa-history text-purple-400 mr-2"></i>
+                Recent Activity
+            </h2>
+            <div id="activityTimeline" class="space-y-4"></div>
+        </div>
+    </div>
+
+    <script>
+
+        // Mock Data - Replace with backend API calls
+        const assets = [
+            {
+                id: 1,
+                name: "Samsung 55\" QLED TV",
+                category: "Electronics",
+                purchaseDate: "2023-08-15",
+                warrantyEnd: "2026-08-15",
+                value: 85000,
+                retailer: "Vijay Sales - Prabhadevi",
+                status: "active",
+                health: 95,
+                image: "📺"
+            },
+            {
+                id: 2,
+                name: "LG Inverter AC 1.5 Ton",
+                category: "Appliances",
+                purchaseDate: "2023-05-20",
+                warrantyEnd: "2024-03-01",
+                value: 42000,
+                retailer: "Croma - Juhu",
+                status: "expiring",
+                health: 78,
+                image: "❄️",
+                maintenanceAlert: "Service AC Filter - 15 days left"
+            },
+            {
+                id: 3,
+                name: "Bosch Coffee Maker",
+                category: "Kitchen",
+                purchaseDate: "2023-11-10",
+                warrantyEnd: "2025-11-10",
+                value: 12500,
+                retailer: "Amazon India",
+                status: "active",
+                health: 88,
+                image: "☕",
+                maintenanceAlert: "Descale Coffee Maker - Recommended"
+            },
+            {
+                id: 4,
+                name: "Dell XPS 15 Laptop",
+                category: "Electronics",
+                purchaseDate: "2022-12-05",
+                warrantyEnd: "2025-12-05",
+                value: 125000,
+                retailer: "Amazon India Invoice",
+                status: "active",
+                health: 92,
+                image: "💻"
+            },
+            {
+                id: 5,
+                name: "Dyson V11 Vacuum",
+                category: "Appliances",
+                purchaseDate: "2023-07-22",
+                warrantyEnd: "2025-07-22",
+                value: 48000,
+                retailer: "Croma - Andheri",
+                status: "active",
+                health: 90,
+                image: "🧹"
+            },
+            {
+                id: 6,
+                name: "Sony WH-1000XM5",
+                category: "Electronics",
+                purchaseDate: "2024-01-15",
+                warrantyEnd: "2025-01-15",
+                value: 29990,
+                retailer: "Vijay Sales - Prabhadevi",
+                status: "active",
+                health: 98,
+                image: "🎧"
+            },
+            {
+                id: 7,
+                name: "Whirlpool Refrigerator",
+                category: "Appliances",
+                purchaseDate: "2022-09-10",
+                warrantyEnd: "2024-02-25",
+                value: 35000,
+                retailer: "Reliance Digital - Bandra",
+                status: "critical",
+                health: 65,
+                image: "🧊",
+                maintenanceAlert: "Warranty expires in 3 days!"
+            }
+        ];
+
+        const activities = [
+            { icon: "fa-plus-circle", color: "emerald", text: "Added Sony WH-1000XM5 to vault", time: "2 hours ago" },
+            { icon: "fa-wrench", color: "amber", text: "Maintenance reminder: AC Filter service due", time: "5 hours ago" },
+            { icon: "fa-shield-check", color: "indigo", text: "Warranty verified for Dell XPS 15", time: "1 day ago" },
+            { icon: "fa-bell", color: "red", text: "Critical: Whirlpool Refrigerator warranty expiring soon", time: "1 day ago" },
+            { icon: "fa-leaf", color: "green", text: "Earned 50 Green Credits from e-waste recycling", time: "2 days ago" }
+        ];
+
+        // Initialize Dashboard
+        function initDashboard() {
+            calculateStats();
+            renderHealthGauge();
+            renderMaintenanceTasks();
+            renderAssetGrid();
+            renderActivityTimeline();
+            renderAlerts();
+            animateCounters();
+        }
+
+        function calculateStats() {
+            const total = assets.length;
+            const active = assets.filter(a => a.status === 'active').length;
+            const expiring = assets.filter(a => a.status === 'expiring' || a.status === 'critical').length;
+            const totalVal = assets.reduce((sum, a) => sum + a.value, 0);
+
+            document.getElementById('totalAssets').textContent = total;
+            document.getElementById('activeWarranties').textContent = active;
+            document.getElementById('expiringSoon').textContent = expiring;
+            document.getElementById('totalValue').textContent = '₹' + (totalVal / 1000).toFixed(0) + 'K';
+        }
+
+        function renderHealthGauge() {
+            const activeAssets = assets.filter(a => a.status === 'active' || a.status === 'expiring');
+            const avgHealth = activeAssets.reduce((sum, a) => sum + a.health, 0) / activeAssets.length;
+            const healthScore = Math.round(avgHealth);
+            
+            const circle = document.getElementById('healthCircle');
+            const circumference = 565.48;
+            const offset = circumference - (healthScore / 100) * circumference;
+            
+            setTimeout(() => {
+                circle.style.strokeDashoffset = offset;
+                animateNumber('healthScore', 0, healthScore, 2000);
+            }, 500);
+
+            // Update status
+            if (healthScore >= 85) {
+                document.getElementById('coverageStatus').textContent = 'Excellent';
+                document.getElementById('riskLevel').textContent = 'Low';
+                document.getElementById('riskLevel').className = 'text-green-400 font-semibold';
+            } else if (healthScore >= 70) {
+                document.getElementById('coverageStatus').textContent = 'Good';
+                document.getElementById('riskLevel').textContent = 'Medium';
+                document.getElementById('riskLevel').className = 'text-amber-400 font-semibold';
+            } else {
+                document.getElementById('coverageStatus').textContent = 'Needs Attention';
+                document.getElementById('riskLevel').textContent = 'High';
+                document.getElementById('riskLevel').className = 'text-red-400 font-semibold';
+            }
+        }
+
+        function renderMaintenanceTasks() {
+            const container = document.getElementById('maintenanceTasks');
+            const tasksWithAlerts = assets.filter(a => a.maintenanceAlert);
+            
+            if (tasksWithAlerts.length === 0) {
+                container.innerHTML = '<p class="text-gray-400 text-center py-8">All systems running smoothly! 🎉</p>';
+                return;
+            }
+
+            container.innerHTML = tasksWithAlerts.map((asset, index) => {
+                const daysLeft = Math.ceil((new Date(asset.warrantyEnd) - new Date()) / (1000 * 60 * 60 * 24));
+                const urgency = daysLeft < 7 ? 'red' : daysLeft < 30 ? 'amber' : 'emerald';
+                
+                return `
+                    <div class="flex items-center justify-between p-4 bg-slate-800 rounded-lg hover:bg-slate-700 transition cursor-pointer" style="animation: slide-up 0.5s ease-out ${index * 0.1}s forwards; opacity: 0;">
+                        <div class="flex items-center space-x-4">
+                            <div class="text-3xl">${asset.image}</div>
+                            <div>
+                                <p class="font-semibold">${asset.maintenanceAlert}</p>
+                                <p class="text-sm text-gray-400">${asset.name} • ${daysLeft} days left</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <span class="px-3 py-1 bg-${urgency}-500/20 text-${urgency}-400 rounded-full text-xs font-semibold">
+                                ${urgency === 'red' ? 'URGENT' : urgency === 'amber' ? 'SOON' : 'SCHEDULED'}
+                            </span>
+                            <button class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-sm transition">
+                                Schedule
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderAssetGrid() {
+            const container = document.getElementById('assetGrid');
+            
+            container.innerHTML = assets.map((asset, index) => {
+                const daysLeft = Math.ceil((new Date(asset.warrantyEnd) - new Date()) / (1000 * 60 * 60 * 24));
+                const warrantyProgress = Math.max(0, Math.min(100, (daysLeft / 365) * 100));
+                const progressColor = warrantyProgress > 50 ? 'emerald' : warrantyProgress > 20 ? 'amber' : 'red';
+                
+                return `
+                    <div class="bg-slate-800 rounded-xl p-5 hover:bg-slate-700 transition cursor-pointer group" style="animation: slide-up 0.5s ease-out ${index * 0.05}s forwards; opacity: 0;">
+                        <div class="flex items-start justify-between mb-3">
+                            <div class="text-4xl group-hover:scale-110 transition-transform">${asset.image}</div>
+                            <span class="px-2 py-1 bg-${asset.status === 'critical' ? 'red' : asset.status === 'expiring' ? 'amber' : 'emerald'}-500/20 text-${asset.status === 'critical' ? 'red' : asset.status === 'expiring' ? 'amber' : 'emerald'}-400 rounded text-xs font-semibold">
+                                ${asset.status.toUpperCase()}
+                            </span>
+                        </div>
+                        <h3 class="font-bold text-white mb-1">${asset.name}</h3>
+                        <p class="text-sm text-gray-400 mb-3">${asset.retailer}</p>
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-xs text-gray-400">
+                                <span>Warranty Life</span>
+                                <span>${daysLeft} days left</span>
+                            </div>
+                            <div class="w-full bg-slate-700 rounded-full h-2 overflow-hidden">
+                                <div class="h-full bg-gradient-to-r from-${progressColor}-500 to-${progressColor}-400 rounded-full transition-all duration-1000" style="width: ${warrantyProgress}%"></div>
+                            </div>
+                            <div class="flex justify-between items-center pt-2">
+                                <span class="text-sm font-semibold text-white">₹${(asset.value / 1000).toFixed(1)}K</span>
+                                <div class="flex space-x-2">
+                                    <button class="p-2 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-xs transition">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="p-2 bg-slate-600 hover:bg-slate-500 rounded-lg text-xs transition">
+                                        <i class="fas fa-download"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderActivityTimeline() {
+            const container = document.getElementById('activityTimeline');
+            
+            container.innerHTML = activities.map((activity, index) => `
+                <div class="flex items-start space-x-4 p-3 hover:bg-slate-800 rounded-lg transition" style="animation: slide-up 0.5s ease-out ${index * 0.1}s forwards; opacity: 0;">
+                    <div class="w-10 h-10 bg-${activity.color}-600 rounded-full flex items-center justify-center flex-shrink-0">
+                        <i class="fas ${activity.icon}"></i>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-white">${activity.text}</p>
+                        <p class="text-sm text-gray-400">${activity.time}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderAlerts() {
+            const criticalAssets = assets.filter(a => a.status === 'critical');
+            const container = document.getElementById('alertBanner');
+            
+            if (criticalAssets.length > 0) {
+                container.innerHTML = `
+                    <div class="bg-red-500/20 border border-red-500 rounded-xl p-4 flex items-center justify-between animate-pulse-glow">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-exclamation-circle text-red-400 text-2xl"></i>
+                            <div>
+                                <p class="font-bold text-red-400">Critical Alert!</p>
+                                <p class="text-sm text-gray-300">${criticalAssets[0].name} warranty expires in 3 days. Take action now!</p>
+                            </div>
+                        </div>
+                        <button onclick="window.location.href='/claim-concierge'" class="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg transition">
+                            Renew Now
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        function animateNumber(id, start, end, duration) {
+            const element = document.getElementById(id);
+            const range = end - start;
+            const increment = range / (duration / 16);
+            let current = start;
+            
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= end) {
+                    element.textContent = Math.round(end);
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.round(current);
+                }
+            }, 16);
+        }
+
+        function animateCounters() {
+            setTimeout(() => {
+                const counters = ['totalAssets', 'activeWarranties', 'expiringSoon'];
+                counters.forEach(id => {
+                    const element = document.getElementById(id);
+                    const target = parseInt(element.textContent);
+                    element.textContent = '0';
+                    animateNumber(id, 0, target, 1500);
+                });
+            }, 300);
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', initDashboard);
+    </script>
+</body>
+</html>

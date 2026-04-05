@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HiveVault - Sustainability Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.3); } 50% { box-shadow: 0 0 40px rgba(16, 185, 129, 0.6); } }
+        @keyframes slide-up { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes leaf-float { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-10px) rotate(5deg); } }
+        @keyframes fill-meter { from { width: 0%; } to { width: var(--target-width); } }
+        .glass-card { background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .animate-slide-up { animation: slide-up 0.6s ease-out forwards; }
+        .animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+        .animate-leaf-float { animation: leaf-float 3s ease-in-out infinite; }
+    </style>
+</head>
+<body class="bg-slate-900 text-gray-100 min-h-screen">
+    
+    <!-- Navigation -->
+    <nav class="glass-card border-b border-slate-700 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-emerald-500 to-indigo-600 rounded-lg flex items-center justify-center animate-pulse-glow">
+                        <i class="fas fa-shield-alt text-white"></i>
+                    </div>
+                    <span class="text-2xl font-bold bg-gradient-to-r from-emerald-400 to-indigo-500 bg-clip-text text-transparent">Warrify</span>
+                </div>
+                <div class="flex items-center space-x-6">
+                    <a href="/dashboard" class="text-gray-300 hover:text-white transition"><i class="fas fa-home mr-2"></i>Dashboard</a>
+                    <a href="/add-product" class="text-gray-300 hover:text-white transition"><i class="fas fa-plus-circle mr-2"></i>Add Product</a>
+                    <a href="/claim-concierge" class="text-gray-300 hover:text-white transition"><i class="fas fa-hands-helping mr-2"></i>Claims</a>
+                    <a href="/sustainability" class="text-emerald-400 hover:text-emerald-300 transition"><i class="fas fa-leaf mr-2"></i>Sustainability</a>
+                    <a href="/community" class="text-gray-300 hover:text-white transition"><i class="fas fa-users mr-2"></i>Community</a>
+                    <div class="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center cursor-pointer hover:bg-indigo-500 transition">
+                        <i class="fas fa-user"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Header -->
+        <div class="mb-8 animate-slide-up text-center">
+            <div class="inline-block mb-4 animate-leaf-float">
+                <div class="w-20 h-20 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center">
+                    <i class="fas fa-leaf text-4xl text-white"></i>
+                </div>
+            </div>
+            <h1 class="text-4xl font-bold mb-2">Sustainability Hub 🌱</h1>
+            <p class="text-gray-400">Extend product life, reduce waste, earn rewards</p>
+        </div>
+
+        <!-- Green Credits Dashboard -->
+        <div class="glass-card rounded-xl p-8 mb-8 animate-slide-up" style="animation-delay: 0.1s">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold flex items-center">
+                    <i class="fas fa-coins text-amber-400 mr-3"></i>
+                    Your Green Credits
+                </h2>
+                <button class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 rounded-lg transition">
+                    <i class="fas fa-gift mr-2"></i>Redeem Rewards
+                </button>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                <div class="bg-slate-800 rounded-xl p-6 text-center">
+                    <div class="text-5xl font-bold text-emerald-400 mb-2" id="totalCredits">0</div>
+                    <p class="text-gray-400">Total Credits</p>
+                </div>
+                <div class="bg-slate-800 rounded-xl p-6 text-center">
+                    <div class="text-5xl font-bold text-green-400 mb-2" id="itemsRecycled">0</div>
+                    <p class="text-gray-400">Items Recycled</p>
+                </div>
+                <div class="bg-slate-800 rounded-xl p-6 text-center">
+                    <div class="text-5xl font-bold text-blue-400 mb-2" id="co2Saved">0</div>
+                    <p class="text-gray-400">kg CO₂ Saved</p>
+                </div>
+            </div>
+
+            <!-- Green Credit Meter -->
+            <div class="bg-slate-800 rounded-xl p-6">
+                <div class="flex justify-between items-center mb-3">
+                    <span class="text-sm font-semibold">Progress to Next Reward</span>
+                    <span class="text-sm text-emerald-400 font-semibold">750 / 1000 Credits</span>
+                </div>
+                <div class="w-full bg-slate-700 rounded-full h-4 overflow-hidden">
+                    <div id="creditMeter" class="h-full bg-gradient-to-r from-green-500 to-emerald-400 rounded-full transition-all duration-1000" style="width: 0%"></div>
+                </div>
+                <p class="text-xs text-gray-400 mt-2">250 more credits to unlock ₹500 voucher!</p>
+            </div>
+        </div>
+
+        <!-- Verified Resale Section -->
+        <div class="glass-card rounded-xl p-8 mb-8 animate-slide-up" style="animation-delay: 0.2s">
+            <h2 class="text-2xl font-bold mb-6 flex items-center">
+                <i class="fas fa-certificate text-indigo-400 mr-3"></i>
+                Verified Resale Marketplace
+            </h2>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- List Item -->
+                <div class="bg-slate-800 rounded-xl p-6">
+                    <h3 class="text-xl font-bold mb-4">List Your Product</h3>
+                    <div class="space-y-4">
+                        <select id="resaleProduct" class="w-full px-4 py-3 rounded-lg bg-slate-700 border border-slate-600 text-white">
+                            <option value="">Select product to sell...</option>
+                            <option value="1">Samsung 55" QLED TV</option>
+                            <option value="2">LG Inverter AC 1.5 Ton</option>
+                            <option value="3">Bosch Coffee Maker</option>
+                            <option value="4">Dell XPS 15 Laptop</option>
+                        </select>
+                        
+                        <div>
+                            <label class="block text-sm font-semibold mb-2">Asking Price (₹)</label>
+                            <input type="number" id="askingPrice" class="w-full px-4 py-3 rounded-lg bg-slate-700 border border-slate-600 text-white" placeholder="45000">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-semibold mb-2">Condition</label>
+                            <select class="w-full px-4 py-3 rounded-lg bg-slate-700 border border-slate-600 text-white">
+                                <option>Excellent</option>
+                                <option>Good</option>
+                                <option>Fair</option>
+                            </select>
+                        </div>
+                        
+                        <button onclick="previewListing()" class="w-full px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg hover:from-indigo-600 hover:to-purple-700 transition font-bold">
+                            <i class="fas fa-eye mr-2"></i>Preview Listing
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Warranty Badge Preview -->
+                <div class="bg-slate-800 rounded-xl p-6">
+                    <h3 class="text-xl font-bold mb-4">Verified Warranty Badge</h3>
+                    <div class="bg-gradient-to-br from-emerald-500/20 to-indigo-500/20 border-2 border-emerald-500 rounded-xl p-6 mb-4">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <h4 class="font-bold text-lg">Samsung 55" QLED TV</h4>
+                                <p class="text-sm text-gray-400">Listed on OLX</p>
+                            </div>
+                            <div class="w-16 h-16 bg-emerald-500 rounded-full flex items-center justify-center animate-pulse-glow">
+                                <i class="fas fa-shield-check text-2xl text-white"></i>
+                            </div>
+                        </div>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Warranty Valid Until:</span>
+                                <span class="text-emerald-400 font-semibold">Aug 2026</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Original Purchase:</span>
+                                <span class="text-white font-semibold">Verified ✓</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Service History:</span>
+                                <span class="text-white font-semibold">Clean</span>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-400 mb-4">
+                        <i class="fas fa-info-circle text-indigo-400 mr-2"></i>
+                        Verified badges increase buyer trust by 85% and sell 3x faster!
+                    </p>
+                    <div class="flex space-x-2">
+                        <button class="flex-1 px-4 py-2 bg-orange-600 hover:bg-orange-700 rounded-lg transition text-sm">
+                            <i class="fab fa-olx mr-1"></i>List on OLX
+                        </button>
+                        <button class="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition text-sm">
+                            <i class="fas fa-mobile-alt mr-1"></i>Cashify
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- E-Waste Hub -->
+        <div class="glass-card rounded-xl p-8 animate-slide-up" style="animation-delay: 0.3s">
+            <h2 class="text-2xl font-bold mb-6 flex items-center">
+                <i class="fas fa-recycle text-green-400 mr-3"></i>
+                E-Waste Recycling Hub
+            </h2>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Schedule Pickup -->
+                <div class="lg:col-span-2 bg-slate-800 rounded-xl p-6">
+                    <h3 class="text-xl font-bold mb-4">Schedule E-Waste Pickup</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="block text-sm font-semibold mb-2">Item Type</label>
+                            <select class="w-full px-4 py-3 rounded-lg bg-slate-700 border border-slate-600 text-white">
+                                <option>Old Mobile Phone</option>
+                                <option>Laptop/Computer</option>
+                                <option>TV/Monitor</option>
+                                <option>Kitchen Appliance</option>
+                                <option>Other Electronics</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold mb-2">Pickup Date</label>
+                            <input type="date" class="w-full px-4 py-3 rounded-lg bg-slate-700 border border-slate-600 text-white">
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="block text-sm font-semibold mb-2">Pickup Address</label>
+                        <textarea rows="2" class="w-full px-4 py-3 rounded-lg bg-slate-700 border border-slate-600 text-white" placeholder="Enter your address..."></textarea>
+                    </div>
+                    
+                    <div class="bg-green-500/20 border border-green-500 rounded-lg p-4 mb-4">
+                        <p class="text-green-400 font-semibold flex items-center">
+                            <i class="fas fa-gift mr-2"></i>
+                            Earn 50 Green Credits for this recycling!
+                        </p>
+                    </div>
+                    
+                    <button onclick="schedulePickup()" class="w-full px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 rounded-lg hover:from-green-600 hover:to-emerald-700 transition font-bold">
+                        <i class="fas fa-truck mr-2"></i>Schedule Pickup
+                    </button>
+                </div>
+
+                <!-- Recycling Partners -->
+                <div class="bg-slate-800 rounded-xl p-6">
+                    <h3 class="text-xl font-bold mb-4">Our Partners</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center space-x-3 p-3 bg-slate-700 rounded-lg">
+                            <div class="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center">
+                                <i class="fas fa-leaf"></i>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-sm">E-Parisaraa</p>
+                                <p class="text-xs text-gray-400">Certified Recycler</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3 p-3 bg-slate-700 rounded-lg">
+                            <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
+                                <i class="fas fa-recycle"></i>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-sm">Attero</p>
+                                <p class="text-xs text-gray-400">E-Waste Management</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3 p-3 bg-slate-700 rounded-lg">
+                            <div class="w-10 h-10 bg-purple-600 rounded-full flex items-center justify-center">
+                                <i class="fas fa-hands-helping"></i>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-sm">Karma Recycling</p>
+                                <p class="text-xs text-gray-400">Mumbai Based</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 p-3 bg-indigo-500/20 border border-indigo-500 rounded-lg">
+                        <p class="text-xs text-indigo-300">
+                            <i class="fas fa-shield-check mr-1"></i>
+                            All partners are government certified
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            animateCredits();
+            animateMeter();
+        });
+
+        function animateCredits() {
+            animateNumber('totalCredits', 0, 750, 2000);
+            animateNumber('itemsRecycled', 0, 12, 2000);
+            animateNumber('co2Saved', 0, 45, 2000);
+        }
+
+        function animateMeter() {
+            setTimeout(() => {
+                document.getElementById('creditMeter').style.width = '75%';
+            }, 500);
+        }
+
+        function animateNumber(id, start, end, duration) {
+            const element = document.getElementById(id);
+            const range = end - start;
+            const increment = range / (duration / 16);
+            let current = start;
+            
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= end) {
+                    element.textContent = Math.round(end);
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.round(current);
+                }
+            }, 16);
+        }
+
+        function previewListing() {
+            const product = document.getElementById('resaleProduct');
+            const price = document.getElementById('askingPrice').value;
+            
+            if (!product.value || !price) {
+                alert('Please select a product and enter a price');
+                return;
+            }
+            
+            alert(`Preview: Your listing will appear on OLX and Cashify with:\n\n✓ Verified Warranty Badge\n✓ Original Purchase Proof\n✓ Service History\n✓ HiveVault Trust Score\n\nThis increases buyer confidence and helps you sell faster at better prices!`);
+        }
+
+        function schedulePickup() {
+            alert('Pickup Scheduled! 🎉\n\nYour e-waste pickup has been scheduled.\n\n✓ Partner: E-Parisaraa\n✓ Green Credits: +50\n✓ CO₂ Impact: -5kg\n\nYou\'ll receive a confirmation SMS shortly.');
+        }
+    </script>
+</body>
+</html>

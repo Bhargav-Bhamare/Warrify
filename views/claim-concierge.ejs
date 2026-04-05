@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HiveVault - Claim Concierge</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.3); } 50% { box-shadow: 0 0 40px rgba(16, 185, 129, 0.6); } }
+        @keyframes slide-up { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes progress-fill { from { width: 0%; } to { width: 100%; } }
+        .glass-card { background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .animate-slide-up { animation: slide-up 0.6s ease-out forwards; }
+        .animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+        .animate-spin-slow { animation: spin-slow 2s linear infinite; }
+        input[type="text"], input[type="search"] { background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(255, 255, 255, 0.1); transition: all 0.3s ease; }
+        input[type="text"]:focus, input[type="search"]:focus { background: rgba(30, 41, 59, 0.8); border-color: #10b981; outline: none; box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1); }
+    </style>
+</head>
+<body class="bg-slate-900 text-gray-100 min-h-screen">
+    
+    <!-- Navigation -->
+    <nav class="glass-card border-b border-slate-700 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-emerald-500 to-indigo-600 rounded-lg flex items-center justify-center animate-pulse-glow">
+                        <i class="fas fa-shield-alt text-white"></i>
+                    </div>
+                    <span class="text-2xl font-bold bg-gradient-to-r from-emerald-400 to-indigo-500 bg-clip-text text-transparent">Warrify</span>
+                </div>
+                <div class="flex items-center space-x-6">
+                    <a href="/dashboard" class="text-gray-300 hover:text-white transition"><i class="fas fa-home mr-2"></i>Dashboard</a>
+                    <a href="/add-product" class="text-gray-300 hover:text-white transition"><i class="fas fa-plus-circle mr-2"></i>Add Product</a>
+                    <a href="/claim-concierge" class="text-emerald-400 hover:text-emerald-300 transition"><i class="fas fa-hands-helping mr-2"></i>Claims</a>
+                    <a href="/sustainability" class="text-gray-300 hover:text-white transition"><i class="fas fa-leaf mr-2"></i>Sustainability</a>
+                    <a href="/community" class="text-gray-300 hover:text-white transition"><i class="fas fa-users mr-2"></i>Community</a>
+                    <div class="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center cursor-pointer hover:bg-indigo-500 transition">
+                        <i class="fas fa-user"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Header -->
+        <div class="mb-8 animate-slide-up">
+            <h1 class="text-4xl font-bold mb-2">Claim Concierge 🛡️</h1>
+            <p class="text-gray-400">Your personal warranty claim assistant</p>
+        </div>
+
+        <!-- Quick Claim Section -->
+        <div class="glass-card rounded-xl p-8 mb-8 animate-slide-up" style="animation-delay: 0.1s">
+            <h2 class="text-2xl font-bold mb-6 flex items-center">
+                <i class="fas fa-bolt text-amber-400 mr-3"></i>
+                One-Click Claim
+                <span class="ml-3 px-3 py-1 bg-amber-500/20 text-amber-400 rounded-full text-sm font-semibold">
+                    <i class="fas fa-star mr-1"></i>Winning Feature
+                </span>
+            </h2>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-semibold mb-2">Select Product</label>
+                    <select id="claimProduct" class="w-full px-4 py-3 rounded-lg bg-slate-800 border border-slate-700 text-white">
+                        <option value="">Choose a product...</option>
+                        <option value="1">Samsung 55" QLED TV - Vijay Sales</option>
+                        <option value="2">LG Inverter AC 1.5 Ton - Croma</option>
+                        <option value="3">Bosch Coffee Maker - Amazon</option>
+                        <option value="4">Dell XPS 15 Laptop - Amazon</option>
+                        <option value="7">Whirlpool Refrigerator - Reliance Digital</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-semibold mb-2">Issue Type</label>
+                    <select id="issueType" class="w-full px-4 py-3 rounded-lg bg-slate-800 border border-slate-700 text-white">
+                        <option value="">Select issue...</option>
+                        <option value="malfunction">Product Malfunction</option>
+                        <option value="damage">Physical Damage</option>
+                        <option value="performance">Performance Issue</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="mt-4">
+                <label class="block text-sm font-semibold mb-2">Describe the Issue</label>
+                <textarea id="issueDescription" rows="3" class="w-full px-4 py-3 rounded-lg bg-slate-800 border border-slate-700 text-white" placeholder="Briefly describe what happened..."></textarea>
+            </div>
+            
+            <button onclick="startClaimProcess()" class="mt-6 w-full px-6 py-4 bg-gradient-to-r from-amber-500 to-orange-600 rounded-lg hover:from-amber-600 hover:to-orange-700 transition font-bold text-lg flex items-center justify-center space-x-2">
+                <i class="fas fa-rocket"></i>
+                <span>Generate Claim Package</span>
+            </button>
+        </div>
+
+        <!-- Claim Processing Modal -->
+        <div id="claimModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+            <div class="glass-card rounded-2xl p-8 max-w-lg mx-4 animate-slide-up">
+                <div class="text-center mb-6">
+                    <div class="w-20 h-20 bg-gradient-to-br from-amber-500 to-orange-600 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse-glow">
+                        <i class="fas fa-cog text-4xl text-white animate-spin-slow"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-2" id="claimStatusTitle">Processing Your Claim</h3>
+                    <p class="text-gray-400" id="claimStatusText">Please wait while we compile your documents...</p>
+                </div>
+                
+                <div class="space-y-3 mb-6" id="claimSteps"></div>
+                
+                <div class="w-full bg-slate-700 rounded-full h-3 overflow-hidden">
+                    <div id="claimProgress" class="h-full bg-gradient-to-r from-amber-500 to-orange-600 rounded-full transition-all duration-500" style="width: 0%"></div>
+                </div>
+                
+                <div id="claimComplete" class="hidden mt-6">
+                    <div class="bg-emerald-500/20 border border-emerald-500 rounded-lg p-4 mb-4">
+                        <p class="text-emerald-400 font-semibold flex items-center">
+                            <i class="fas fa-check-circle mr-2"></i>
+                            Claim package ready for download!
+                        </p>
+                    </div>
+                    <div class="flex space-x-3">
+                        <button onclick="downloadClaim()" class="flex-1 px-6 py-3 bg-gradient-to-r from-emerald-500 to-indigo-600 rounded-lg hover:from-emerald-600 hover:to-indigo-700 transition">
+                            <i class="fas fa-download mr-2"></i>Download PDF
+                        </button>
+                        <button onclick="closeClaimModal()" class="flex-1 px-6 py-3 bg-slate-700 hover:bg-slate-600 rounded-lg transition">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Service Centers Directory -->
+        <div class="glass-card rounded-xl p-8 mb-8 animate-slide-up" style="animation-delay: 0.2s">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold flex items-center">
+                    <i class="fas fa-map-marker-alt text-indigo-400 mr-3"></i>
+                    Authorized Service Centers
+                </h2>
+                <div class="relative">
+                    <input type="search" id="searchCenters" placeholder="Search by brand or area..." class="pl-10 pr-4 py-2 rounded-lg text-white w-64">
+                    <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                </div>
+            </div>
+            
+            <div id="serviceCenters" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+        </div>
+
+        <!-- Active Claims -->
+        <div class="glass-card rounded-xl p-8 animate-slide-up" style="animation-delay: 0.3s">
+            <h2 class="text-2xl font-bold mb-6 flex items-center">
+                <i class="fas fa-clipboard-list text-purple-400 mr-3"></i>
+                Your Active Claims
+            </h2>
+            <div id="activeClaims"></div>
+        </div>
+    </div>
+
+    <script>
+        // Mock Data
+        const serviceCenters = [
+            { id: 1, brand: "Samsung", name: "Samsung Service Center - Andheri", area: "Andheri West", address: "Shop 12, Lokhandwala Complex, Andheri West", phone: "+91 22 2634 5678", rating: 4.5, distance: "2.3 km" },
+            { id: 2, brand: "LG", name: "LG Authorized Service - Bandra", area: "Bandra", address: "Hill Road, Near Shoppers Stop, Bandra West", phone: "+91 22 2640 1234", rating: 4.3, distance: "3.8 km" },
+            { id: 3, brand: "Bosch", name: "Bosch Service Point - Juhu", area: "Juhu", address: "Juhu Tara Road, Opposite SNDT College", phone: "+91 22 2660 9876", rating: 4.7, distance: "4.2 km" },
+            { id: 4, brand: "Dell", name: "Dell Exclusive Service - Lower Parel", area: "Lower Parel", address: "Phoenix Mills Compound, Lower Parel", phone: "+91 22 2495 3456", rating: 4.6, distance: "5.1 km" },
+            { id: 5, brand: "Whirlpool", name: "Whirlpool Care Center - Dadar", area: "Dadar", address: "Shivaji Park, Dadar West", phone: "+91 22 2444 7890", rating: 4.2, distance: "3.5 km" },
+            { id: 6, brand: "Sony", name: "Sony Service Center - Powai", area: "Powai", address: "Hiranandani Gardens, Powai", phone: "+91 22 2570 1122", rating: 4.8, distance: "6.7 km" }
+        ];
+
+        const activeClaims = [
+            { id: 1, product: "LG Inverter AC", status: "In Progress", date: "2024-02-18", center: "LG Authorized Service - Bandra", stage: 3 },
+            { id: 2, product: "Whirlpool Refrigerator", status: "Pending Review", date: "2024-02-20", center: "Whirlpool Care Center - Dadar", stage: 1 }
+        ];
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            renderServiceCenters(serviceCenters);
+            renderActiveClaims();
+            setupSearch();
+        });
+
+        function renderServiceCenters(centers) {
+            const container = document.getElementById('serviceCenters');
+            container.innerHTML = centers.map((center, index) => `
+                <div class="bg-slate-800 rounded-lg p-5 hover:bg-slate-700 transition cursor-pointer" style="animation: slide-up 0.5s ease-out ${index * 0.05}s forwards; opacity: 0;">
+                    <div class="flex items-start justify-between mb-3">
+                        <div>
+                            <h3 class="font-bold text-white mb-1">${center.name}</h3>
+                            <p class="text-sm text-gray-400">${center.area} • ${center.distance}</p>
+                        </div>
+                        <div class="flex items-center space-x-1 bg-amber-500/20 px-2 py-1 rounded">
+                            <i class="fas fa-star text-amber-400 text-xs"></i>
+                            <span class="text-amber-400 text-sm font-semibold">${center.rating}</span>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-300 mb-3"><i class="fas fa-map-marker-alt text-indigo-400 mr-2"></i>${center.address}</p>
+                    <div class="flex items-center justify-between">
+                        <a href="tel:${center.phone}" class="text-emerald-400 hover:text-emerald-300 text-sm">
+                            <i class="fas fa-phone mr-1"></i>${center.phone}
+                        </a>
+                        <div class="flex space-x-2">
+                            <button class="px-3 py-1 bg-indigo-600 hover:bg-indigo-700 rounded text-sm transition">
+                                <i class="fas fa-directions"></i> Directions
+                            </button>
+                            <button class="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 rounded text-sm transition">
+                                <i class="fas fa-calendar"></i> Book
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderActiveClaims() {
+            const container = document.getElementById('activeClaims');
+            
+            if (activeClaims.length === 0) {
+                container.innerHTML = '<p class="text-gray-400 text-center py-8">No active claims at the moment</p>';
+                return;
+            }
+
+            container.innerHTML = activeClaims.map((claim, index) => {
+                const statusColor = claim.status === 'In Progress' ? 'indigo' : 'amber';
+                const progress = (claim.stage / 4) * 100;
+                
+                return `
+                    <div class="bg-slate-800 rounded-lg p-5 mb-4 hover:bg-slate-700 transition" style="animation: slide-up 0.5s ease-out ${index * 0.1}s forwards; opacity: 0;">
+                        <div class="flex items-start justify-between mb-4">
+                            <div>
+                                <h3 class="font-bold text-white mb-1">${claim.product}</h3>
+                                <p class="text-sm text-gray-400">Filed on ${claim.date}</p>
+                            </div>
+                            <span class="px-3 py-1 bg-${statusColor}-500/20 text-${statusColor}-400 rounded-full text-sm font-semibold">
+                                ${claim.status}
+                            </span>
+                        </div>
+                        <p class="text-sm text-gray-300 mb-3"><i class="fas fa-wrench text-emerald-400 mr-2"></i>${claim.center}</p>
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-xs text-gray-400">
+                                <span>Claim Progress</span>
+                                <span>Stage ${claim.stage}/4</span>
+                            </div>
+                            <div class="w-full bg-slate-700 rounded-full h-2 overflow-hidden">
+                                <div class="h-full bg-gradient-to-r from-${statusColor}-500 to-${statusColor}-400 rounded-full" style="width: ${progress}%"></div>
+                            </div>
+                        </div>
+                        <div class="flex space-x-2 mt-4">
+                            <button class="flex-1 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-sm transition">
+                                <i class="fas fa-eye mr-1"></i>View Details
+                            </button>
+                            <button class="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg text-sm transition">
+                                <i class="fas fa-phone"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function setupSearch() {
+            const searchInput = document.getElementById('searchCenters');
+            searchInput.addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase();
+                const filtered = serviceCenters.filter(center => 
+                    center.brand.toLowerCase().includes(query) ||
+                    center.name.toLowerCase().includes(query) ||
+                    center.area.toLowerCase().includes(query)
+                );
+                renderServiceCenters(filtered);
+            });
+        }
+
+        function startClaimProcess() {
+            const product = document.getElementById('claimProduct').value;
+            const issue = document.getElementById('issueType').value;
+            const description = document.getElementById('issueDescription').value;
+
+            if (!product || !issue || !description) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            document.getElementById('claimModal').classList.remove('hidden');
+            
+            const steps = [
+                { text: 'Gathering product information...', delay: 500 },
+                { text: 'Retrieving warranty documents...', delay: 1500 },
+                { text: 'Compiling purchase receipts...', delay: 2500 },
+                { text: 'Generating claim form...', delay: 3500 },
+                { text: 'Attaching service center details...', delay: 4500 },
+                { text: 'Creating PDF package...', delay: 5500 },
+                { text: 'Finalizing claim documents...', delay: 6500 }
+            ];
+
+            const stepsContainer = document.getElementById('claimSteps');
+            const progressBar = document.getElementById('claimProgress');
+            
+            steps.forEach((step, index) => {
+                setTimeout(() => {
+                    const stepEl = document.createElement('div');
+                    stepEl.className = 'flex items-center space-x-3 text-sm';
+                    stepEl.innerHTML = `
+                        <i class="fas fa-check-circle text-emerald-400"></i>
+                        <span class="text-gray-300">${step.text}</span>
+                    `;
+                    stepsContainer.appendChild(stepEl);
+                    
+                    const progress = ((index + 1) / steps.length) * 100;
+                    progressBar.style.width = progress + '%';
+                    
+                    if (index === steps.length - 1) {
+                        setTimeout(() => {
+                            document.getElementById('claimStatusTitle').textContent = 'Claim Package Ready! 🎉';
+                            document.getElementById('claimStatusText').textContent = 'Your comprehensive claim package has been generated';
+                            document.getElementById('claimComplete').classList.remove('hidden');
+                        }, 500);
+                    }
+                }, step.delay);
+            });
+        }
+
+        function downloadClaim() {
+            // Simulate download
+            alert('Downloading claim package PDF...\n\nIn production, this would download a comprehensive PDF containing:\n• Product details & warranty info\n• Purchase receipts\n• Claim form (pre-filled)\n• Service center contacts\n• Legal documentation');
+        }
+
+        function closeClaimModal() {
+            document.getElementById('claimModal').classList.add('hidden');
+            document.getElementById('claimSteps').innerHTML = '';
+            document.getElementById('claimProgress').style.width = '0%';
+            document.getElementById('claimComplete').classList.add('hidden');
+            document.getElementById('claimStatusTitle').textContent = 'Processing Your Claim';
+            document.getElementById('claimStatusText').textContent = 'Please wait while we compile your documents...';
+        }
+    </script>
+</body>
+</html>
